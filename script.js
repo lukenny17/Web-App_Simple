@@ -13,3 +13,13 @@ document.getElementById('bookingForm').addEventListener('submit', function(event
     // Here you might want to send the data to the server using fetch API or another method
     alert('Service booked successfully!');
 });
+
+// Show either login or registration form
+
+function showForm(formType) {
+    var forms = document.querySelectorAll('#loginForm, #registerForm');
+    forms.forEach(function(form) {
+        form.style.display = 'none'; // Hide all forms
+    });
+    document.getElementById(formType + 'Form').style.display = 'block'; // Show the selected form
+}

@@ -1,84 +1,25 @@
-/* General body styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh; /* Use min-height for better flexibility on content size */
+.google-map {
+    height: 100%;
+    width: 100%;
 }
 
-/* Centered container for all content, adjusted to include a broader area */
-.container, header, section {
-    width: 80%;
-    max-width: 600px;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    text-align: center;
-    margin: 10px auto; /* Centers content and provides spacing between blocks */
+iframe {
+    border: 0;
+    height: 100%;
+    width: 100%;
 }
 
-/* Headings */
-h1, h2 {
-    color: #0056b3;
-    margin: 10px 0 20px; /* Uniform margin for all headings */
+#faqAccordion {
+    padding: 0 -5px; /* Reduces padding to 10px on the left and right */
 }
 
-/* Paragraphs and blockquotes for any text */
-p, blockquote {
-    font-size: 16px;
-    line-height: 1.5;
-    margin: 20px 0;
-    color: #555; /* Slightly lighter text for easier reading */
+/* Ensures all titles have the same height */
+#services .card-title {
+    min-height: 50px;
+    max-height: 50px;
 }
 
-blockquote {
-    font-style: italic;
-    border-left: 4px solid #ccc;
-    padding-left: 15px;
-}
-
-/* Styling for forms and their elements */
-form {
-    margin-top: 20px;
-}
-
-input[type=text], input[type=password], select {
-    width: calc(100% - 20px); /* Full width minus padding */
-    padding: 10px;
-    margin-top: 8px;
-    margin-bottom: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-/* Buttons styling enhanced for both general and specific actions */
-button {
-    background-color: #007BFF; /* Blue background */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px 0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-    transform: translateY(-2px); /* Slight lift */
-}
-
-/* Specific styles for logout and other functional buttons */
-button[name="logout"], button[name="submit"] {
-    background-color: #f44336; /* Red background for logout to indicate a different action */
-}
-
-button[name="logout"]:hover, button[name="submit"]:hover {
-    background-color: #c2302b; /* Darker red on hover */
+/* Ensures all text descriptions have the same height */
+#services .card-text {
+    max-height: 60px;
 }

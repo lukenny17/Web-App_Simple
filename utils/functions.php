@@ -1,8 +1,10 @@
 <?php
 // Include database connection settings
 require_once 'db.php';
+require_once '../config/config.php'; //Contains access code for admin/staff role creation
 
-function handleLogin($conn) {
+function handleLogin($conn)
+{
     $email = $_POST['email'];
     $password = $_POST['password'];
     $sql = "SELECT userID, name, email, password, role FROM Users WHERE email = ?";
@@ -29,35 +31,42 @@ function handleLogin($conn) {
     }
 }
 
-function handleRegistration($conn) {
+function handleRegistration($conn)
+{
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
+    $accessCode = $_POST['access_code']; // Only required for staff or admin
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return ['error' => "Invalid email format!"];
+        return ['error' => "Invalid email format."];
     } else {
-        $sql = "INSERT INTO Users (name, email, password, role) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        if ($stmt) {
-            $stmt->bind_param("ssss", $name, $email, $password, $role);
-            $stmt->execute();
-            if ($stmt->affected_rows === 1) {
-                $_SESSION['userid'] = $stmt->insert_id;
-                $_SESSION['username'] = $name;
-                $_SESSION['role'] = $role;
-                return ['success' => true];
-            } else {
-                return ['error' => "Registration failed: " . $stmt->error];
-            }
+        if ($role !== 'customer' && $accessCode !== ACCESS_CODE) {
+            return ['error' => "Invalid access code for staff/admin registration."];
         } else {
-            return ['error' => "Failed to prepare statement."];
+            $sql = "INSERT INTO Users (name, email, password, role) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            if ($stmt) {
+                $stmt->bind_param("ssss", $name, $email, $password, $role);
+                $stmt->execute();
+                if ($stmt->affected_rows === 1) {
+                    $_SESSION['userid'] = $stmt->insert_id;
+                    $_SESSION['username'] = $name;
+                    $_SESSION['role'] = $role;
+                    return ['success' => true];
+                } else {
+                    return ['error' => "Registration failed: " . $stmt->error];
+                }
+            } else {
+                return ['error' => "Failed to prepare statement."];
+            }
         }
     }
 }
 
-function fetchFeedbackData($conn) {
+function fetchFeedbackData($conn)
+{
     $feedbackData = [];
     // Adjust the query to join with the Users table and select the necessary columns
     $feedbackQuery = "SELECT f.comment, f.rating, f.feedbackDate, u.name AS customerName 
@@ -71,4 +80,17 @@ function fetchFeedbackData($conn) {
         }
     }
     return $feedbackData;
+}
+
+function fetchServices($conn)
+{
+    $services = [];
+    // Fetch available services
+    $query = "SELECT * FROM services";
+    $result = $conn->query($query);
+
+    while ($row = $result->fetch_assoc()) {
+        $services[] = $row;
+    }
+    return $services;
 }

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'functions.php'; // Include functions for login and registration
+include '../utils/functions.php';
 
 $message = ''; // To store messages for the user
 
@@ -47,112 +47,28 @@ if ($conn) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Luxe Auto Repair</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../resources/style.css">
 </head>
 
+<header>
+    <?php
+    include '../common/navbar.php'
+    ?>
+</header>
+
 <body class="bg-light">
-    <header>
-        <!-- Navigation -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container">
-                <a class="navbar-brand" href="#">Luxe Auto Repair</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="sections/services.php">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#faqs">FAQs</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </div>
-            </div>
-        </nav>
-    </header>
-
     <main class="container mt-0">
-
-        <!-- Login Modal -->
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="POST">
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password:</label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" name="login" class="btn btn-primary">Login</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Register Modal -->
-        <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="registerModalLabel">Register</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="POST">
-                            <div class="form-group">
-                                <label for="name">Name:</label>
-                                <input type="text" name="name" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" name="email" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password:</label>
-                                <input type="password" name="password" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="role">Role:</label>
-                                <select name="role" class="form-control">
-                                    <option value="customer">Customer</option>
-                                    <option value="staff">Staff</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" name="register" class="btn btn-secondary">Register</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Display content of $message variable-->
         <div class="container mt-2">
             <?php if (!empty($message)) : ?>
                 <div class="alert alert-warning"><?php echo $message; ?></div>
             <?php endif; ?>
         </div>
+
+        <!-- Login/Registration Modal -->
+        <?php 
+        include '../common/modal.php';
+        ?>
 
         <!-- Services Preview -->
         <section id="services" class="text-center">
@@ -162,7 +78,7 @@ if ($conn) {
             <div class="row">
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/full_service.jpg" class="card-img-top" alt="Full Service">
+                        <img src="../resources/services/full_service.jpg" class="card-img-top" alt="Full Service">
                         <div class="card-body">
                             <h5 class="card-title">Full Service</h5>
                             <p class="card-text">Complete vehicle checkup.</p>
@@ -173,7 +89,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/oil_change.jpg" class="card-img-top" alt="Oil Change">
+                        <img src="../resources/services/oil_change.jpg" class="card-img-top" alt="Oil Change">
                         <div class="card-body">
                             <h5 class="card-title">Oil Change</h5>
                             <p class="card-text">Regular and synthetic options.</p>
@@ -184,7 +100,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/tyre_change.jpg" class="card-img-top" alt="Tire Change">
+                        <img src="../resources/services/tyre_change.jpg" class="card-img-top" alt="Tire Change">
                         <div class="card-body">
                             <h5 class="card-title">Tyre Change</h5>
                             <p class="card-text">Mounting, balancing, and rotation.</p>
@@ -195,7 +111,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/brake_replacement.jpg" class="card-img-top" alt="Brake Service">
+                        <img src="../resources/services/brake_replacement.jpg" class="card-img-top" alt="Brake Service">
                         <div class="card-body">
                             <h5 class="card-title">Brake Service</h5>
                             <p class="card-text">Pads, discs, and inspection.</p>
@@ -206,7 +122,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/battery.webp" class="card-img-top" alt="Battery Replacement">
+                        <img src="../resources/services/battery.webp" class="card-img-top" alt="Battery Replacement">
                         <div class="card-body">
                             <h5 class="card-title">Battery Replacement</h5>
                             <p class="card-text">Testing and replacement service.</p>
@@ -217,7 +133,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/ac_service.jpg" class="card-img-top" alt="AC Service">
+                        <img src="../resources/services/ac_service.jpg" class="card-img-top" alt="AC Service">
                         <div class="card-body">
                             <h5 class="card-title">Air Conditioning</h5>
                             <p class="card-text">Check and recharge AC unit.</p>
@@ -228,7 +144,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3 pb-2">
                     <div class="card">
-                        <img src="resources/services/transmission_flush.jpg" class="card-img-top" alt="Transmission Fluid Flush">
+                        <img src="../resources/services/transmission_flush.jpg" class="card-img-top" alt="Transmission Fluid Flush">
                         <div class="card-body">
                             <h5 class="card-title">Transmission Fluid Flush</h5>
                             <p class="card-text">Transmission fluid replacement.</p>
@@ -239,7 +155,7 @@ if ($conn) {
                 </div>
                 <div class="col-md-3">
                     <div class="card">
-                        <img src="resources/services/engine_diagnostics.jpg" class="card-img-top" alt="Engine Diagnostics">
+                        <img src="../resources/services/engine_diagnostics.jpg" class="card-img-top" alt="Engine Diagnostics">
                         <div class="card-body">
                             <h5 class="card-title">Engine Diagnostics</h5>
                             <p class="card-text">Advanced troubleshooting.</p>
@@ -249,9 +165,9 @@ if ($conn) {
                     </div>
                 </div>
             </div>
-                <div class="moreInformation pb-2">
-                    <a href="sections/services.php" class="btn btn-primary">Book a Service Here</a>
-                </div>
+            <div class="moreInformation pb-2">
+                <a href="bookService.php" class="btn btn-primary">Book a Service</a>
+            </div>
             </div>
         </section>
 
@@ -368,14 +284,14 @@ if ($conn) {
         <footer class="footer">
             <div class="container text-center">
                 <h2>Follow Us</h2>
-                <a href="https://www.facebook.com/UniversityofKent/?locale=en_GB"><img src="resources/socials/facebook.webp" alt="Facebook" style="width: 40px; height: 40px;"></a>
-                <a href="https://x.com/UniKent"><img src="resources/socials/twitter.webp" alt="X" style="width: 40px; height: 40px;"></a>
-                <a href="https://www.instagram.com/unikentlive/?hl=en"><img src="resources/socials/instagram.webp" alt="Instagram" style="width: 40px; height: 40px;"></a>
+                <a href="https://www.facebook.com/UniversityofKent/?locale=en_GB"><img src="../resources/socials/facebook.webp" alt="Facebook" style="width: 40px; height: 40px;"></a>
+                <a href="https://x.com/UniKent"><img src="../resources/socials/twitter.webp" alt="X" style="width: 40px; height: 40px;"></a>
+                <a href="https://www.instagram.com/unikentlive/?hl=en"><img src="../resources/socials/instagram.webp" alt="Instagram" style="width: 40px; height: 40px;"></a>
                 <!-- More icons as needed -->
             </div>
         </footer>
 
-        <footer class="text-center text-light bg-dark mt-4">
+        <footer class="text-center mt-4">
             <p>&copy; 2024 Garage Booking Application. All rights reserved.</p>
         </footer>
 

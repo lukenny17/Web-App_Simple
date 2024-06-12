@@ -7,7 +7,7 @@ if (!isset($_SESSION['userid'])) {
     exit;
 }
 
-include 'db.php';
+include '../utils/db.php';
 
 // Fetch user information
 $userID = $_SESSION['userid'];
@@ -55,14 +55,14 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Garage Booking Application</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../resources/style.css">
 </head>
 <body>
     <div class="container mt-5">
         <header class="mb-4">
             <h1 class="text-center">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
             <div class="text-center">
-                <form method="post" action="sections/logout.php">
+                <form method="post" action="logout.php">
                     <button type="submit" name="logout" class="btn btn-danger">Logout</button>
                 </form>
             </div>

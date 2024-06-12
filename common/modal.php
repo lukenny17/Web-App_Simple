@@ -1,9 +1,20 @@
-<!-- Dashboard Modal -->
+<?php
+// Determine the current page
+$currentPage = basename($_SERVER['SCRIPT_NAME']);
+$modalTitle = ""; // Default title
+
+if ($currentPage == 'index.php') {
+    $modalTitle = ""; // Leave blank for index.php
+} elseif ($currentPage == 'bookService.php') {
+    $modalTitle = "For Bookings, Please Login/Register"; // Specific title for serviceBooking.php
+}
+?>
+
 <div class="modal fade" id="dashboardModal" tabindex="-1" aria-labelledby="dashboardModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dashboardModalLabel">Dashboard</h5>
+                <h5 class="modal-title" id="dashboardModalLabel"><?php echo htmlspecialchars($modalTitle); ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

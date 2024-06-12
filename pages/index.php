@@ -4,10 +4,10 @@ include '../utils/functions.php';
 
 $message = ''; // To store messages for the user
 
-if (isset($_SESSION['userid'])) {
-    header("Location: dashboard.php");
-    exit;
-}
+// if (isset($_SESSION['userid'])) {
+//     header("Location: dashboard.php");
+//     exit;
+// }
 
 // Fetch testimonials data
 $feedbackData = fetchFeedbackData($conn);
@@ -17,16 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $result = handleLogin($conn);
         if (isset($result['success'])) {
-            header("Location: dashboard.php");
-            exit;
+            // Process login success without redirection
         } else {
             $message = $result['error'];
         }
     } elseif (isset($_POST['register'])) {
         $result = handleRegistration($conn);
         if (isset($result['success'])) {
-            header("Location: dashboard.php");
-            exit;
+            // Process registration success without redirection
         } else {
             $message = $result['error'];
         }
@@ -66,7 +64,7 @@ if ($conn) {
         </div>
 
         <!-- Login/Registration Modal -->
-        <?php 
+        <?php
         include '../common/modal.php';
         ?>
 

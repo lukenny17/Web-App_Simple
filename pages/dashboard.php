@@ -16,7 +16,7 @@ $role = $_SESSION['role'];
 
 // Prepare statements based on user role
 if ($role === 'customer') {
-    $stmt = $conn->prepare("SELECT b.bookingID, s.serviceName, b.bookingDate, b.status 
+    $stmt = $conn->prepare("SELECT b.bookingID, s.serviceName, b.startTime, b.status 
                             FROM Bookings b 
                             JOIN Services s ON b.serviceID = s.serviceID 
                             WHERE b.userID = ?");
@@ -24,7 +24,7 @@ if ($role === 'customer') {
     $stmt->execute();
     $bookings = $stmt->get_result();
 } elseif ($role === 'staff') {
-    $stmt = $conn->prepare("SELECT b.bookingID, u.name AS customerName, s.serviceName, b.bookingDate, b.status 
+    $stmt = $conn->prepare("SELECT b.bookingID, u.name AS customerName, s.serviceName, b.startTime, b.status 
                             FROM Bookings b 
                             JOIN Users u ON b.userID = u.userID 
                             JOIN Services s ON b.serviceID = s.serviceID 
@@ -81,7 +81,7 @@ $conn->close();
                                         <h5 class="mb-1"><?php echo htmlspecialchars($booking['serviceName']); ?></h5>
                                         <small><?php echo htmlspecialchars($booking['status']); ?></small>
                                     </div>
-                                    <p class="mb-1"><?php echo htmlspecialchars($booking['bookingDate']); ?></p>
+                                    <p class="mb-1"><?php echo htmlspecialchars($booking['startTime']); ?></p>
                                 </a>
                             <?php endwhile; ?>
                         <?php else: ?>
@@ -100,7 +100,7 @@ $conn->close();
                                         <h5 class="mb-1"><?php echo htmlspecialchars($task['customerName']); ?></h5>
                                         <small><?php echo htmlspecialchars($task['status']); ?></small>
                                     </div>
-                                    <p class="mb-1"><?php echo htmlspecialchars($task['serviceName']); ?> on <?php echo htmlspecialchars($task['bookingDate']); ?></p>
+                                    <p class="mb-1"><?php echo htmlspecialchars($task['serviceName']); ?> on <?php echo htmlspecialchars($task['startTime']); ?></p>
                                 </a>
                             <?php endwhile; ?>
                         <?php else: ?>

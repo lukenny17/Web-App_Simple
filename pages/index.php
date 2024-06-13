@@ -101,7 +101,7 @@ if ($conn) {
                         <img src="../resources/services/tyre_change.jpg" class="card-img-top" alt="Tire Change">
                         <div class="card-body">
                             <h5 class="card-title">Tyre Change</h5>
-                            <p class="card-text">Mounting, balancing, and rotation.</p>
+                            <p class="card-text">Mounting and rotation.</p>
                             <p>Starting at £29.99</p>
                             <a href="#" class="btn btn-primary">Learn More</a>
                         </div>
@@ -123,7 +123,7 @@ if ($conn) {
                         <img src="../resources/services/battery.webp" class="card-img-top" alt="Battery Replacement">
                         <div class="card-body">
                             <h5 class="card-title">Battery Replacement</h5>
-                            <p class="card-text">Testing and replacement service.</p>
+                            <p class="card-text">Testing and replacement.</p>
                             <p>Starting at £69.99</p>
                             <a href="#" class="btn btn-primary">Learn More</a>
                         </div>

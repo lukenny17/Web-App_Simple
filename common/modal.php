@@ -10,11 +10,11 @@ if ($currentPage == 'index.php') {
 }
 ?>
 
-<div class="modal fade" id="dashboardModal" tabindex="-1" aria-labelledby="dashboardModalLabel" aria-hidden="true">
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dashboardModalLabel"><?php echo htmlspecialchars($modalTitle); ?></h5>
+                <h5 class="modal-title" id="modalLabel"><?php echo htmlspecialchars($modalTitle); ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

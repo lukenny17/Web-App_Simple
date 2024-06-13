@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Insert booking information
             $stmt = $conn->prepare("INSERT INTO bookings (userID, serviceID, vehicleID, startTime, duration, status) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param('iiisss', $userID, $serviceID, $vehicleID, $startTime, $serviceDuration, $status);
+            $stmt->bind_param('iiisds', $userID, $serviceID, $vehicleID, $startTime, $serviceDuration, $status);
             if ($stmt->execute()) {
                 $message = "Booking successful!";
             } else {
@@ -64,9 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-
 // Fetch available services
 $services = fetchServices($conn);
+
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +91,7 @@ $services = fetchServices($conn);
         <?php if (!isset($_SESSION['userid'])) : ?>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
-                    var modal = new bootstrap.Modal(document.getElementById('dashboardModal'));
+                    var modal = new bootstrap.Modal(document.getElementById('modal'));
                     modal.show();
                 });
             </script>

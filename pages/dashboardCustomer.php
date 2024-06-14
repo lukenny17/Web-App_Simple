@@ -5,11 +5,24 @@ if (!isset($role) || $role !== 'customer') {
     exit;
 }
 
+// Initialize sort variable
+$sort = $_GET['sort'] ?? 'startTime'; // Default to sorting by 'startTime' if no sort parameter is provided
+
+// Determine the sorting order
+$orderBy = 'b.startTime DESC'; // Default order
+if ($sort === 'serviceName') {
+    $orderBy = 's.serviceName';
+} elseif ($sort === 'status') {
+    $orderBy = 'b.status';
+} elseif ($sort === 'startTime') {
+    $orderBy = 'b.startTime DESC';
+}
+
 // Fetch customer-specific bookings
 $stmt = $conn->prepare("SELECT b.bookingID, s.serviceName, s.serviceID, b.startTime, b.status 
                         FROM Bookings b 
                         JOIN Services s ON b.serviceID = s.serviceID 
-                        WHERE b.userID = ? AND b.status != 'cancelled'");
+                        WHERE b.userID = ? AND b.status != 'cancelled' ORDER BY $orderBy");
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $bookings = $stmt->get_result();
@@ -17,6 +30,19 @@ $bookings = $stmt->get_result();
 
 <div class="col-md-12">
     <h2>Your Bookings</h2>
+
+    <!-- Sorting Dropdown -->
+    <form action="" method="get">
+        <div class="sorting">
+            <label for="sort" class="form-label">Sort by:</label>
+            <select name="sort" onchange="this.form.submit()">
+                <option value="startTime" <?= $sort === 'startTime' ? 'selected' : '' ?>>Date</option>
+                <option value="serviceName" <?= $sort === 'serviceName' ? 'selected' : '' ?>>Service Type</option>
+                <option value="status" <?= $sort === 'status' ? 'selected' : '' ?>>Status</option>
+            </select>
+        </div>
+    </form>
+
     <?php if ($bookings->num_rows > 0) : ?>
         <div class="list-group">
             <?php while ($booking = $bookings->fetch_assoc()) : ?>

@@ -4,6 +4,12 @@ include '../utils/functions.php';  // Include login and database connection func
 
 $message = '';
 $availableTimes = [];
+$vehicles = [];
+
+if (isset($_SESSION['userid'])) {
+    $userID = $_SESSION['userid'];
+    $vehicles = fetchUserVehicles($conn, $userID);
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
@@ -20,46 +26,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    function getServiceDuration($conn, $serviceId) {
-        $stmt = $conn->prepare("SELECT duration FROM services WHERE serviceID = ?");
-        $stmt->bind_param("i", $serviceId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($row = $result->fetch_assoc()) {
-            return $row['duration'];
-        }
-        return 0; // Default to 0 if no duration found
-    }
-
-    // If booking form submitted
     if (isset($_POST['bookService']) && isset($_SESSION['userid'])) {
         $userID = $_SESSION['userid'];
-        $make = $_POST['make'];
-        $model = $_POST['model'];
-        $year = $_POST['year'];
-        $licensePlate = $_POST['licensePlate'];
+        $vehicleID = $_POST['vehicleID'];  // Comes from the form, can be new or existing
+        if ($vehicleID == "new") {
+            $make = $_POST['make'];
+            $model = $_POST['model'];
+            $year = $_POST['year'];
+            $licensePlate = $_POST['licensePlate'];
+
+            // Insert vehicle information
+            $stmt = $conn->prepare("INSERT INTO vehicles (userID, make, model, year, licensePlate) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param('issis', $userID, $make, $model, $year, $licensePlate);
+            $stmt->execute();
+            $vehicleID = $conn->insert_id; // Newly created vehicle ID
+        }
+
         $serviceID = $_POST['service'];
         $serviceDuration = getServiceDuration($conn, $serviceID);
         $date = $_POST['date'];
         $startTime = $date . ' ' . $_POST['time'];
         $status = 'scheduled';
 
-        // Insert vehicle information
-        $stmt = $conn->prepare("INSERT INTO vehicles (userID, make, model, year, licensePlate) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param('issis', $userID, $make, $model, $year, $licensePlate);
+        // Insert booking information
+        $stmt = $conn->prepare("INSERT INTO bookings (userID, serviceID, vehicleID, startTime, duration, status) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param('iiisds', $userID, $serviceID, $vehicleID, $startTime, $serviceDuration, $status);
         if ($stmt->execute()) {
-            $vehicleID = $conn->insert_id;
-
-            // Insert booking information
-            $stmt = $conn->prepare("INSERT INTO bookings (userID, serviceID, vehicleID, startTime, duration, status) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param('iiisds', $userID, $serviceID, $vehicleID, $startTime, $serviceDuration, $status);
-            if ($stmt->execute()) {
-                $message = "Booking successful!";
-            } else {
-                $message = "Error booking service: " . $stmt->error;
-            }
+            $message = "Booking successful!";
         } else {
-            $message = "Error registering vehicle: " . $stmt->error;
+            $message = "Error booking service: " . $stmt->error;
         }
     }
 }
@@ -99,23 +94,36 @@ $services = fetchServices($conn);
 
         <form method="POST">
             <div class="mb-3">
-                <label for="make" class="form-label">Make</label>
-                <input type="text" class="form-control" id="make" name="make" required>
+                <label for="vehicleID" class="form-label">Vehicle</label>
+                <select class="form-select" id="vehicleID" name="vehicleID" onchange="toggleVehicleForm(this.value)">
+                    <option value="new">Add New Vehicle</option>
+                    <?php foreach ($vehicles as $vehicle) : ?>
+                        <option value="<?= $vehicle['vehicleID'] ?>">
+                            <?= htmlspecialchars($vehicle['make'] . ' ' . $vehicle['model'] . ' - ' . $vehicle['licensePlate']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
-            <div class="mb-3">
-                <label for="model" class="form-label">Model</label>
-                <input type="text" class="form-control" id="model" name="model" required>
+            <!-- New Vehicle Details Form -->
+            <div id="newVehicleDetails" style="display:none;">
+                <div class="mb-3">
+                    <label for="make" class="form-label">Make</label>
+                    <input type="text" class="form-control" id="make" name="make">
+                </div>
+                <div class="mb-3">
+                    <label for="model" class="form-label">Model</label>
+                    <input type="text" class="form-control" id="model" name="model">
+                </div>
+                <div class="mb-3">
+                    <label for="year" class="form-label">Year</label>
+                    <input type="number" class="form-control" id="year" name="year" min="1900" max="<?= date("Y") ?>">
+                </div>
+                <div class="mb-3">
+                    <label for="licensePlate" class="form-label">License Plate</label>
+                    <input type="text" class="form-control" id="licensePlate" name="licensePlate">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="year" class="form-label">Year</label>
-                <input type="number" class="form-control" id="year" name="year" required min="1900" max="<?= date("Y") ?>">
-            </div>
-            <div class="mb-3">
-                <label for="licensePlate" class="form-label">License Plate</label>
-                <input type="text" class="form-control" id="licensePlate" name="licensePlate" required>
-            </div>
-                <!-- Add in regex for license plate if desired -->
-                <!-- pattern="^([A-Z]{3}\s?(\d{3}|\d{2}|\d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$" title="Please enter a valid registration number." -->
+            <!-- Remaining form fields -->
             <div class="mb-3">
                 <label for="service" class="form-label">Service</label>
                 <select class="form-select" id="service" name="service" required>
@@ -134,8 +142,12 @@ $services = fetchServices($conn);
             </div>
             <button type="submit" name="bookService" class="btn btn-primary">Book Now</button>
         </form>
-    </main>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function toggleVehicleForm(value) {
+                var display = (value === 'new') ? 'block' : 'none';
+                document.getElementById('newVehicleDetails').style.display = display;
+            }
+        </script>
 </body>
 
 </html>

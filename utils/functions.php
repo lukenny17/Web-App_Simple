@@ -94,3 +94,26 @@ function fetchServices($conn)
     }
     return $services;
 }
+
+function fetchUserVehicles($conn, $userId) {
+    $vehicles = [];
+    $stmt = $conn->prepare("SELECT vehicleID, make, model, year, licensePlate FROM vehicles WHERE userID = ?");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $vehicles[] = $row;
+    }
+    return $vehicles;
+}
+
+function getServiceDuration($conn, $serviceId) {
+    $stmt = $conn->prepare("SELECT duration FROM services WHERE serviceID = ?");
+    $stmt->bind_param("i", $serviceId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        return $row['duration'];
+    }
+    return 0; // Default to 0 if no duration found
+}

@@ -38,8 +38,8 @@ $role = $_SESSION['role'];
         ?>
     </header>
 
-    <div class="container mt-5">
-        <header class="mb-4">
+    <div class="container mt-0">
+        <header class="mb-0">
             <h1 class="text-center">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
         </header>
 

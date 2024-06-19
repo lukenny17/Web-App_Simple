@@ -22,7 +22,7 @@ $role = $_SESSION['role'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Garage Booking Application</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -38,7 +38,7 @@ $role = $_SESSION['role'];
         ?>
     </header>
 
-    <div class="container mt-0">
+    <div class="container mt-2">
         <header class="mb-0">
             <h1 class="text-center">Welcome, <?php echo htmlspecialchars($username); ?>!</h1>
         </header>

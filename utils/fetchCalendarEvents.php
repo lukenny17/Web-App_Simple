@@ -1,49 +1,43 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-
+header('Content-Type: application/json');
 include 'db.php';
 
-header('Content-Type: application/json');
-
-// Prepare and execute the query to fetch events with staff information
 $query = "SELECT 
-            bookings.bookingID, 
-            bookings.startTime, 
-            DATE_ADD(bookings.startTime, INTERVAL services.duration HOUR) as endTime, 
-            services.serviceName AS title, 
-            bookings.status, 
-            users.name as staffName
-          FROM bookings
+          bookings.bookingID AS id, 
+          bookings.startTime AS start, 
+          ADDDATE(bookings.startTime, INTERVAL services.duration HOUR) AS end, 
+          services.serviceName AS title, 
+          IFNULL(users.name, 'Unassigned') AS staffName, 
+          bookings.status 
+          FROM bookings 
           JOIN services ON bookings.serviceID = services.serviceID
           LEFT JOIN users ON bookings.staffID = users.userID";
 
-$stmt = $conn->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-
+$result = $conn->query($query);
 $events = [];
-while ($row = $result->fetch_assoc()) {
-    // Assign color based on status
-    $color = '#4D96FF'; // Default blue for scheduled
-    if ($row['status'] === 'completed') {
-        $color = '#75C692'; // Green for completed
-    } elseif ($row['status'] === 'cancelled') {
-        $color = '#FF9999'; // Red for cancelled
-    }
+$staffColors = []; // Array to store colors assigned to staff
 
+while ($row = $result->fetch_assoc()) {
     $events[] = [
-        'id'    => $row['bookingID'],
-        'title' => $row['title'] . " - " . $row['staffName'],
-        'start' => $row['startTime'],
-        'end'   => $row['endTime'],
-        'color' => $color
+        'id'    => $row['id'],
+        'title' => $row['title'],
+        'start' => $row['start'],
+        'end'   => $row['end'],
+        'status'  => $row['status'],
+        'staffName' => $row['staffName'],
+        'color' => getColor($row['staffName'], $staffColors)
     ];
 }
 
 echo json_encode($events);
 
-$stmt->close();
+function getColor($staffName, &$colors)
+{
+    if (!isset($colors[$staffName])) {
+        // Generate a random color
+        $colors[$staffName] = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+    }
+    return $colors[$staffName];
+}
+
 $conn->close();
-?>

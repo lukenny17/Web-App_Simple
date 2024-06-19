@@ -5,15 +5,10 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../resources/style.css">
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css' rel='stylesheet' />
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css' rel='stylesheet' />
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/interaction/main.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.js'></script>
 </head>
+
 
 <body class="bg-light">
     <main class="container mt-0">
@@ -113,6 +108,31 @@
             <h3 class="text-center mt-0">Calendar View</h3>
             <div id='calendar'></div>
         </div>
+
+        <!-- Modal for Event Details -->
+        <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventDetailsModalLabel">Booking Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="eventTitle">Title: </p>
+                        <p id="eventStart">Starts: </p>
+                        <p id="eventEnd">Ends: </p>
+                        <p id="eventStatus">Status: </p>
+                        <p id="eventStaff">Staff: </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>
@@ -250,31 +270,32 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: ['interaction', 'dayGrid', 'timeGrid'],
+            const calendarEl = document.getElementById('calendar')
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
                 headerToolbar: {
-                    left: 'prev,next today', // Buttons for navigation and today
-                    center: 'title', // Title in the center
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // Buttons to switch views
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                initialView: 'timeGridWeek', // Set the initial view to week
-                events: '../utils/fetchCalendarEvents.php', // URL to fetch events
-                eventColor: function(event) {
-                    switch (event.extendedProps.status) { // Use event status to determine color
-                        case 'completed':
-                            return '#28a745'; // Green for completed
-                        case 'scheduled':
-                            return '#007bff'; // Blue for scheduled
-                        case 'cancelled':
-                            return '#dc3545'; // Red for cancelled
-                        default:
-                            return '#ffc107'; // Yellow for others
-                    }
-                }
-            });
-            calendar.render();
-        });
+                eventClick: function(info) {
+                    // Prevent the browser from navigating to the URL in the href attribute of the event's element.
+                    info.jsEvent.preventDefault();
+
+                    // Display event details in modal
+                    document.getElementById('eventTitle').textContent = 'Service: ' + info.event.title;
+                    document.getElementById('eventStart').textContent = 'Start: ' + (info.event.start ? info.event.start.toLocaleString() : 'No start time');
+                    document.getElementById('eventEnd').textContent = 'End: ' + (info.event.end ? info.event.end.toLocaleString() : 'No end time');
+                    document.getElementById('eventStatus').textContent = 'Status: ' + info.event.extendedProps.status;
+                    document.getElementById('eventStaff').textContent = 'Assigned to: ' + info.event.extendedProps.staffName;
+
+                    // Show the modal
+                    $('#eventDetailsModal').modal('show');
+                },
+                events: '../utils/fetchCalendarEvents.php'
+            })
+            calendar.render()
+        })
     </script>
 </body>
 

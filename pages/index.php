@@ -4,11 +4,6 @@ include '../utils/functions.php';
 
 $message = ''; // To store messages for the user
 
-// if (isset($_SESSION['userid'])) {
-//     header("Location: dashboard.php");
-//     exit;
-// }
-
 // Fetch testimonials data
 $feedbackData = fetchFeedbackData($conn);
 
@@ -236,17 +231,6 @@ if ($conn) {
                 </div>
             </div>
         </section>
-
-        <!-- Newsletter signup
-        <section id="newsletter" class="text-center pt-2">
-            <h2>Subscribe to Our Newsletter</h2>
-            <form>
-                <div class="form-group">
-                    <input type="email" class="form-control" placeholder="Enter your email">
-                    <button type="submit" class="btn btn-primary mt-2">Subscribe</button>
-                </div>
-            </form>
-        </section> -->
 
         <!-- Interactive contact section, consider adding in-app whatsapp contact -->
         <section id="contact" class="pt-2">

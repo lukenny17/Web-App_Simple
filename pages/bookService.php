@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare("INSERT INTO bookings (userID, serviceID, vehicleID, startTime, duration, status) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param('iiisds', $userID, $serviceID, $vehicleID, $startTime, $serviceDuration, $status);
         if ($stmt->execute()) {
+            logActivity($conn, $userID, 'Made a booking');
             $message = "Booking successful!";
         } else {
             $message = "Error booking service: " . $stmt->error;
@@ -148,6 +149,8 @@ $services = fetchServices($conn);
                 document.getElementById('newVehicleDetails').style.display = display;
             }
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

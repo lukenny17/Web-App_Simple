@@ -18,6 +18,7 @@ function handleLogin($conn)
                 $_SESSION['userid'] = $user['userID'];
                 $_SESSION['username'] = $user['name'];
                 $_SESSION['role'] = $user['role'];
+                logActivity($conn, $_SESSION['userid'], 'Logged in');
                 return ['success' => true];
             } else {
                 return ['error' => "Invalid password!"];
@@ -54,6 +55,7 @@ function handleRegistration($conn)
                     $_SESSION['userid'] = $stmt->insert_id;
                     $_SESSION['username'] = $name;
                     $_SESSION['role'] = $role;
+                    logActivity($conn, $_SESSION['userid'], 'Registered an account');
                     return ['success' => true];
                 } else {
                     return ['error' => "Registration failed: " . $stmt->error];
@@ -116,4 +118,10 @@ function getServiceDuration($conn, $serviceId) {
         return $row['duration'];
     }
     return 0; // Default to 0 if no duration found
+}
+
+function logActivity($conn, $userID, $activity) {
+    $stmt = $conn->prepare("INSERT INTO user_activities (userID, activity) VALUES (?, ?)");
+    $stmt->bind_param("is", $userID, $activity);
+    $stmt->execute();
 }

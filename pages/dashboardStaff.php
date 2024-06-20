@@ -11,20 +11,13 @@ $staffID = $_SESSION['userid'];
 
 ?>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</head>
-
 <body>
     <div class="container">
         <h1>Staff Dashboard</h1>
         <!-- Filters -->
         <div class="filters my-3">
             <label for="filterType">Filter by status:</label>
-            <select id="filterType" class="form-control w-auto d-inline-block" onchange="applyFilters()">
+            <select id="filterType" class="form-select w-auto d-inline-block" onchange="applyFilters()">
                 <option value="">All</option>
                 <option value="scheduled">Scheduled</option>
                 <option value="completed">Completed</option>
@@ -38,7 +31,7 @@ $staffID = $_SESSION['userid'];
                     <tr>
                         <th>Service Type</th>
                         <th>Date / Time</th>
-                        <th>End Time</th>
+                        <th>Duration (Hours)</th>
                         <th>Update Status</th>
                     </tr>
                 </thead>
@@ -65,15 +58,20 @@ $staffID = $_SESSION['userid'];
                     const bookingList = document.getElementById('bookingList');
                     bookingList.innerHTML = '';
                     data.forEach(booking => {
+                        const selected = {
+                            scheduled: booking.status === 'scheduled' ? 'selected' : '',
+                            completed: booking.status === 'completed' ? 'selected' : '',
+                            cancelled: booking.status === 'cancelled' ? 'selected' : ''
+                        };
                         bookingList.innerHTML += `<tr>
                             <td>${booking.serviceName}</td>
                             <td>${booking.startTime}</td>
-                            <td>${booking.endTime}</td>
+                            <td>${booking.duration}</td>
                             <td>
                                 <select onchange="updateStatus(${booking.bookingID}, this.value)">
-                                    <option value="scheduled" ${booking.status === 'scheduled' ? 'selected' : ''}>Scheduled</option>
-                                    <option value="completed" ${booking.status === 'completed' ? 'selected' : ''}>Completed</option>
-                                    <option value="cancelled" ${booking.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                                    <option value="scheduled" ${selected.scheduled}>Scheduled</option>
+                                    <option value="completed" ${selected.completed}>Completed</option>
+                                    <option value="cancelled" ${selected.cancelled}>Cancelled</option>
                                 </select>
                             </td>
                         </tr>`;
@@ -87,22 +85,21 @@ $staffID = $_SESSION['userid'];
 
         function updateStatus(bookingID, newStatus) {
             fetch('../utils/updateBookingStatus.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `bookingID=${bookingID}&status=${newStatus}`
-                })
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                    applyFilters(); // Refresh list after status update
-                })
-                .catch(error => console.error('Error updating booking status:', error));
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `bookingID=${bookingID}&status=${newStatus}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                applyFilters(); // Refresh list after status update
+            })
+            .catch(error => console.error('Error updating booking status:', error));
         }
 
         document.addEventListener('DOMContentLoaded', applyFilters);
     </script>
 </body>
-
 </html>

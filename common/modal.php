@@ -6,7 +6,7 @@ $modalTitle = ""; // Default title
 if ($currentPage == 'index.php') {
     $modalTitle = ""; // Leave blank for index.php
 } elseif ($currentPage == 'bookService.php') {
-    $modalTitle = "For Bookings, Please Login/Register"; // Specific title for serviceBooking.php
+    $modalTitle = "For Bookings, Please Login/Register"; // Specific title for bookService.php
 }
 ?>
 

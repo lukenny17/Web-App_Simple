@@ -48,7 +48,7 @@ $bookings = $stmt->get_result();
             <?php while ($booking = $bookings->fetch_assoc()) : ?>
                 <div class="list-group-item">
                     <div class="row align-items-center">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <h5 class="mb-0"><?php echo htmlspecialchars($booking['serviceName']); ?></h5>
                         </div>
                         <div class="col-md-2">
@@ -57,14 +57,14 @@ $bookings = $stmt->get_result();
                         <div class="col-md-2">
                             <h7>Status: <?php echo htmlspecialchars($booking['status']); ?></h7>
                         </div>
-                        <div class="col-md-6" style="display: flex; align-items: center;">
+                        <div class="col-md-5 d-flex justify-content-between">
                             <?php if ($booking['status'] == 'scheduled') : ?>
-                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rescheduleModal<?php echo $booking['bookingID']; ?>" style="width: 160px; margin-right: 10px;">Reschedule</button>
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#rescheduleModal<?php echo $booking['bookingID']; ?>" style="flex-grow: 1; margin-right: 5px;">Reschedule</button>
                                 <form action="../utils/cancelBooking.php" method="post">
                                     <input type="hidden" name="bookingID" value="<?php echo $booking['bookingID']; ?>">
-                                    <button type="submit" class="btn btn-danger" style="width: 160px; margin-right: 10px;">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" style="flex-grow: 1; margin-right: 5px;">Cancel</button>
                                 </form>
-                                <button class="btn btn-secondary" onclick="location.href='mailto:admin@example.com?subject=Query About Booking #<?php echo $booking['bookingID']; ?>'" style="width: 160px;">Contact</button>
+                                <button class="btn btn-secondary" onclick="location.href='mailto:admin@example.com?subject=Query About Booking #<?php echo $booking['bookingID']; ?>'" style="flex-grow: 1; margin-right: 5px;">Contact</button>
                                 <!-- Reschedule Modal -->
                                 <div class="modal fade" id="rescheduleModal<?php echo $booking['bookingID']; ?>" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">

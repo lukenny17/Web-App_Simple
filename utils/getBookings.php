@@ -6,8 +6,7 @@ $staffID = $_GET['staffID'] ?? ''; // Default to empty if not provided
 $statusFilter = $_GET['status'] ?? ''; // Default to empty if not provided
 
 // Construct the base query
-$query = "SELECT b.bookingID, s.serviceName, b.startTime, 
-          ADDDATE(b.startTime, INTERVAL s.duration HOUR) AS endTime, b.status
+$query = "SELECT b.bookingID, s.serviceName, b.startTime, s.duration, b.status
           FROM bookings b
           JOIN services s ON b.serviceID = s.serviceID
           WHERE b.staffID = ?";

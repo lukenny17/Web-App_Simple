@@ -108,9 +108,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="eventDetailsModalLabel">Booking Details</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <p id="eventTitle">Title: </p>
@@ -120,8 +118,26 @@
                         <p id="eventStaff">Staff: </p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display Activity Log -->
+        <div class="section">
+            <h3 class="text-center mt-3 mb-3">Activity Log</h3>
+            <div class="container">
+                <form id="filterForm" class="mb-3">
+                    <div class="input-group">
+                        <input type="date" class="form-control" id="filterDate" aria-label="Filter by date">
+                        <button class="btn btn-outline-secondary" type="button" onclick="filterActivities()">Filter</button>
+                    </div>
+                </form>
+                <div class="activity-log-container" style="max-height: 300px; overflow-y: auto;">
+                    <ul class="list-group" id="activityLogList">
+                        <li class="list-group-item">No activities to display. Please select a date to filter.</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -263,7 +279,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calendar')
+            var eventModal = new bootstrap.Modal(document.getElementById('eventDetailsModal'));
+            const calendarEl = document.getElementById('calendar');
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
@@ -272,23 +289,58 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 eventClick: function(info) {
-                    // Prevent the browser from navigating to the URL in the href attribute of the event's element.
                     info.jsEvent.preventDefault();
-
-                    // Display event details in modal
                     document.getElementById('eventTitle').textContent = 'Service: ' + info.event.title;
                     document.getElementById('eventStart').textContent = 'Start: ' + (info.event.start ? info.event.start.toLocaleString() : 'No start time');
                     document.getElementById('eventEnd').textContent = 'End: ' + (info.event.end ? info.event.end.toLocaleString() : 'No end time');
                     document.getElementById('eventStatus').textContent = 'Status: ' + info.event.extendedProps.status;
                     document.getElementById('eventStaff').textContent = 'Assigned to: ' + info.event.extendedProps.staffName;
-
-                    // Show the modal
-                    $('#eventDetailsModal').modal('show');
+                    eventModal.show();
                 },
                 events: '../utils/fetchCalendarEvents.php'
-            })
-            calendar.render()
-        })
+            });
+            calendar.render();
+        });
+
+        // Activity Log Filters
+
+        function filterActivities() {
+            var date = document.getElementById('filterDate').value;
+            if (!date) {
+                alert("Please select a date to filter.");
+                return;
+            }
+
+            fetch('../utils/displayActivityLog.php?date=' + date)
+                .then(response => response.json())
+                .then(data => {
+                    displayActivities(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching activities:', error);
+                    alert('Failed to fetch activities. Please try again.');
+                });
+        }
+
+        function displayActivities(activities) {
+            const list = document.getElementById('activityLogList');
+            list.innerHTML = ''; // Clear existing entries
+
+            activities.forEach(activity => {
+                const item = document.createElement('li');
+                item.className = 'list-group-item';
+                item.innerHTML = `
+            <strong>${activity.name}</strong>
+            - ${activity.activity}
+            <span>${new Date(activity.timestamp).toLocaleString()}</span>
+        `;
+                list.appendChild(item);
+            });
+
+            if (activities.length === 0) {
+                list.innerHTML = '<li class="list-group-item">No activities found for the selected date.</li>';
+            }
+        }
     </script>
 </body>
 
